@@ -15,6 +15,7 @@
 
 namespace Jaeger;
 
+use Actindo\Core\Actindo;
 use Jaeger\Sampler\Sampler;
 use OpenTracing\Exceptions\UnsupportedFormat;
 use OpenTracing\SpanContext;
@@ -92,7 +93,10 @@ class Jaeger implements Tracer{
 
         $parentSpan = $this->getParentSpanContext($options);
         if($parentSpan == null || !$parentSpan->traceIdLow){
-            $low = $this->generateId();
+            if( function_exists('Actindo') && Actindo::haveInstance() )
+                $low = Actindo::getRequestIdNumeric();
+            else
+                $low = $this->generateId();
             $spanId = $low;
             $flags = $this->sampler->IsSampled();
             $spanContext = new \Jaeger\SpanContext($spanId, 0, $flags, null, 0);
