@@ -46,6 +46,7 @@ class Config {
 
     public static $propagator = \Jaeger\Constants\PROPAGATOR_JAEGER;
 
+    private $spanClass = null;
 
     private function __construct(){
 
@@ -105,7 +106,7 @@ class Config {
             $this->scopeManager = new ScopeManager();
         }
 
-        $tracer = new Jaeger($serverName, $this->reporter, $this->sampler, $this->scopeManager);
+        $tracer = new Jaeger($serverName, $this->reporter, $this->sampler, $this->scopeManager, $this->spanClass );
 
         if($this->gen128bit == true){
             $tracer->gen128bit();
@@ -174,4 +175,18 @@ class Config {
 
         return true;
     }
+
+    /**
+     * Set span class
+     * @param string $spanClass
+     * @return Config
+     */
+    public function setSpanClass($spanClass)
+    {
+        $this->spanClass = $spanClass;
+
+        return $this;
+    }
+
+
 }

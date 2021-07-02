@@ -49,8 +49,19 @@ class Jaeger implements Tracer{
     /** @var Propagator|null */
     public $propagator = null;
 
+    /**
+     * @var string $spanClass Class name to instanciate on span creation
+     */
+    protected $spanClass = Span::class;
+
     public function __construct($serverName = '', Reporter $reporter, Sampler $sampler,
-                                ScopeManager $scopeManager){
+                                ScopeManager $scopeManager, $spanClass=Span::class){
+
+        if( !is_a($spanClass, Span::class, true) )
+        {
+            throw new \Exception( sprintf('Span class %s does not extend %s', $spanClass, Span::class) );
+        }
+        $this->spanClass = $spanClass;
 
         $this->reporter = $reporter;
 
@@ -87,6 +98,7 @@ class Jaeger implements Tracer{
      */
     public function startSpan($operationName, $options = []){
 
+        $spanClass = $this->spanClass;
         if (!($options instanceof StartSpanOptions)) {
             $options = StartSpanOptions::create($options);
         }
@@ -114,7 +126,8 @@ class Jaeger implements Tracer{
         }
 
         $startTime = $options->getStartTime() ? intval($options->getStartTime() * 1000000) : null;
-        $span = new Span($operationName, $spanContext, $options->getReferences(), $startTime);
+        $span = new $spanClass($operationName, $spanContext, $options->getReferences(), $startTime);
+        /* @var Span $span */
         if(!empty($options->getTags())) {
             foreach ($options->getTags() as $k => $tag) {
                 $span->setTag($k, $tag);
