@@ -39,7 +39,7 @@ $spanContext = $clientTracer->extract(Formats\TEXT_MAP, $_SERVER);
 $clientSpan = $clientTracer->startSpan('get', ['child_of' => $spanContext]);
 $clientSpan->addBaggageItem("version", "2.0.0");
 
-$clientTracer->inject($clientSpan->spanContext, Formats\TEXT_MAP, $header);
+$clientTracer->inject($clientSpan->getSpanContext(), Formats\TEXT_MAP, $header);
 
 $url = 'http://0.0.0.0:8080/main';
 $client = Client::create($url, false);

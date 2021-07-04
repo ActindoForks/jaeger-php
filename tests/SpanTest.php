@@ -33,7 +33,7 @@ class SpanTest extends TestCase
     public function testAddTags(){
         $span = new Span('test', new NoopSpanContext(), []);
         $span->setTag('test', 'test');
-        $this->assertTrue((isset($span->tags['test']) && $span->tags['test'] == 'test'));
+        $this->assertTrue((isset($span->getTags()['test']) && $span->getTags()['test'] == 'test'));
     }
 
 
@@ -41,7 +41,7 @@ class SpanTest extends TestCase
         $span = new Span('test', new NoopSpanContext(), []);
         $span->setTag('test', 'test');
         $span->finish();
-        $this->assertTrue(!empty($span->finishTime) && !empty($span->duration));
+        $this->assertTrue(!empty($span->getFinishTime()) && !empty($span->getDuration()));
     }
 
 
@@ -60,7 +60,7 @@ class SpanTest extends TestCase
             'msg2' => 'is msg 2'
         ];
         $span->log($logs);
-        $this->assertTrue(count($span->logs) == 1);
+        $this->assertTrue(count($span->getLogs()) == 1);
     }
 
 

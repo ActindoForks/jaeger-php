@@ -46,7 +46,7 @@ class JaegerThriftSpan{
 
     public function buildJaegerSpanThrift(Span $span){
 
-        $spContext = $span->spanContext;
+        $spContext = $span->getSpanContext();
         $thriftSpan = [
             'traceIdLow' => $spContext->traceIdLow,
             'traceIdHigh' => $spContext->traceIdHigh,
@@ -54,11 +54,11 @@ class JaegerThriftSpan{
             'parentSpanId' => $spContext->parentId,
             'operationName' => $span->getOperationName(),
             'flags' => intval($spContext->flags),
-            'startTime' => $span->startTime,
-            'duration' => $span->duration,
-            'tags' => $this->buildTags($span->tags),
-            'logs' => $this->buildLogs($span->logs),
-            'references' => $this->buildReferences($span->references)
+            'startTime' => $span->getStartTime(),
+            'duration' => $span->getDuration(),
+            'tags' => $this->buildTags($span->getTags()),
+            'logs' => $this->buildLogs($span->getLogs()),
+            'references' => $this->buildReferences($span->getReferences())
         ];
 
         return $thriftSpan;

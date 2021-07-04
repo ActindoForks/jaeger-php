@@ -37,7 +37,7 @@ $http->on('request', function ($request, $response) {
     $injectTarget = [];
     $spanContext = $clientTracer->extract(Formats\TEXT_MAP, $_SERVER);
     $clientSpan = $clientTracer->startSpan('Istio1', ['child_of' => $spanContext]);
-    $clientTracer->inject($clientSpan->spanContext, Formats\TEXT_MAP, $injectTarget);
+    $clientTracer->inject($clientSpan->getSpanContext(), Formats\TEXT_MAP, $injectTarget);
 
     $client = new Client();
     $clientSpan->setTag("http.url", "Istio2:8001");

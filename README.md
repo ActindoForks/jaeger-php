@@ -47,7 +47,7 @@ $serverSpan->addBaggageItem("version", "2.0.0");
 ## Inject into Superglobals
 
 ```php
-$clientTrace->inject($clientSpan1->spanContext, Formats\TEXT_MAP, $_SERVER);
+$clientTrace->inject($clientSpan1->getSpanContext(), Formats\TEXT_MAP, $_SERVER);
 ```
 
 ## Tags and Log

@@ -115,7 +115,7 @@ class JaegerTest extends TestCase
     public function testStartSpan(){
         $Jaeger = $this->getJaeger();
         $span = $Jaeger->startSpan('test');
-        $this->assertNotEmpty($span->startTime);
+        $this->assertNotEmpty($span->getStartTime());
         $this->assertNotEmpty($Jaeger->getSpans());
     }
 
@@ -128,8 +128,8 @@ class JaegerTest extends TestCase
             'references' => Reference::create(Reference::FOLLOWS_FROM, $rootSpan),
         ]);
 
-        $this->assertSame($childSpan->spanContext->traceIdLow, $rootSpan->spanContext->traceIdLow);
-        $this->assertSame(current($childSpan->references)->getContext(), $rootSpan->spanContext);
+        $this->assertSame($childSpan->getSpanContext()->traceIdLow, $rootSpan->getSpanContext()->traceIdLow);
+        $this->assertSame(current($childSpan->getReferences())->getContext(), $rootSpan->getSpanContext());
 
         $otherRootSpan = $jaeger->startSpan('root-a');
         $childSpan = $jaeger->startSpan('span-b', [
@@ -139,7 +139,7 @@ class JaegerTest extends TestCase
             ],
         ]);
 
-        $this->assertSame($childSpan->spanContext->traceIdLow, $otherRootSpan->spanContext->traceIdLow);
+        $this->assertSame($childSpan->getSpanContext()->traceIdLow, $otherRootSpan->getSpanContext()->traceIdLow);
     }
 
 
@@ -155,7 +155,7 @@ class JaegerTest extends TestCase
             ],
         ]);
 
-        $this->assertSame($childSpan->spanContext->traceIdLow, $rootSpan->spanContext->traceIdLow);
+        $this->assertSame($childSpan->getSpanContext()->traceIdLow, $rootSpan->getSpanContext()->traceIdLow);
     }
 
 
@@ -164,7 +164,7 @@ class JaegerTest extends TestCase
         $jaeger = $this->getJaeger();
         $span = $jaeger->startSpan('test', ['start_time' => 1499355363.123456]);
 
-        $this->assertSame(1499355363123456, $span->startTime);
+        $this->assertSame(1499355363123456, $span->getStartTime());
     }
 
 
@@ -180,7 +180,7 @@ class JaegerTest extends TestCase
             ],
         ]);
 
-        $this->assertSame($childSpan->spanContext->traceIdLow, $otherRootSpan->spanContext->traceIdLow);
+        $this->assertSame($childSpan->getSpanContext()->traceIdLow, $otherRootSpan->getSpanContext()->traceIdLow);
     }
 
 

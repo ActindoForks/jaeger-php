@@ -16,25 +16,51 @@
 namespace Jaeger;
 
 
-class Span implements \OpenTracing\Span{
+use OpenTracing\Reference;
 
-    private $operationName = '';
+class Span implements \OpenTracing\Span, \JsonSerializable {
 
-    public $startTime = '';
+    protected $operationName = '';
 
-    public $finishTime = '';
+    /**
+     * @var int $startTime Unix timestamp in microseconds
+     */
+    protected $startTime = '';
 
-    public $spanKind = '';
+    /**
+     * @var int $finishTime Unix timestamp in microseconds
+     */
+    protected $finishTime;
 
-    public $spanContext = null;
+    /**
+     * @var string $spanKind
+     */
+    protected $spanKind = '';
 
-    public $duration = 0;
+    /**
+     * @var \OpenTracing\SpanContext|null $spanContext
+     */
+    protected $spanContext = null;
 
-    public $logs = [];
+    /**
+     * @var int $finishTime duration in microseconds after finish
+     */
+    protected $duration;
 
-    public $tags = [];
+    /**
+     * @var string[][] $logs
+     */
+    protected $logs = [];
 
-    public $references = [];
+    /**
+     * @var string[] $tags
+     */
+    protected $tags = [];
+
+    /**
+     * @var Reference[] $references
+     */
+    protected $references = [];
 
     public function __construct($operationName, \OpenTracing\SpanContext $spanContext, $references, $startTime = null){
         $this->operationName = $operationName;
@@ -58,8 +84,7 @@ class Span implements \OpenTracing\Span{
     }
 
     /**
-     * @param float|int|\DateTimeInterface|null $finishTime if passing float or int
-     * it should represent the timestamp (including as many decimal places as you need)
+     * @param int|null $finishTime if passing int: unix timestamp in microseconds
      * @param array $logRecords
      * @return mixed
      */
@@ -123,4 +148,87 @@ class Span implements \OpenTracing\Span{
     private function microtimeToInt(){
         return intval(microtime(true) * 1000000);
     }
+
+    /**
+     * @return int Unix timestamp in microseconds
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * @return int|null Duration in microseconds after finish
+     */
+    public function getDuration()
+    {
+        return $this->duration;
+    }
+
+    /**
+     * @return int|null Unix timestamp in microseconds
+     */
+    public function getFinishTime()
+    {
+        return $this->finishTime;
+    }
+
+
+
+    public function jsonSerialize()
+    {
+        return [
+            'operationName' => $this->operationName,
+            'startTime' => $this->startTime,
+            'finishTime' => $this->finishTime,
+            'spanKind' => $this->spanKind,
+            'spanContext' => $this->spanContext,
+            'duration' => $this->duration,
+            'logs' => $this->logs,
+            'tags' => $this->tags,
+            'references' => $this->references,
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getSpanKind()
+    {
+        return $this->spanKind;
+    }
+
+    /**
+     * @return \OpenTracing\SpanContext|null
+     */
+    public function getSpanContext()
+    {
+        return $this->spanContext;
+    }
+
+    /**
+     * @return \string[][]
+     */
+    public function getLogs()
+    {
+        return $this->logs;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @return Reference[]
+     */
+    public function getReferences()
+    {
+        return $this->references;
+    }
+
+
 }
